@@ -11,5 +11,16 @@ pipeline {
                 sh 'packer --version'
             }
         }
+        stage('Connect to the aws console'){
+            steps{
+                sh '''
+                withCredentials([usernamePassword(credentialsId: 'aws-creds', passwordVariable: 'secret-access-key', usernameVariable: 'access-key')]) {
+                aws configure set aws_access_key $access-key
+                aws configure set aws_secret_access_key $secret-access-key
+                aws configure set default.region us-east-1
+                '''
+                }
+            }
+        }
     }
 }
