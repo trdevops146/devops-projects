@@ -13,14 +13,16 @@ pipeline {
         }
         stage('Connect to the aws console'){
             steps{
-                sh '''
                 withCredentials([usernamePassword(credentialsId: 'aws-creds', passwordVariable: 'secret-access-key', usernameVariable: 'access-key')]) {
-                aws configure set aws_access_key $access-key
-                aws configure set aws_secret_access_key $secret-access-key
-                aws configure set default.region us-east-1
-                }
+                sh '''
+                    #!/bin/bash
+                    aws configure set aws_access_key_id $access-key
+                    aws configure set aws_secret_access_key $secret-access-key
+                    aws configure set default.region us-east-1
+                    aws sts get-caller-identity
                 '''
                 }
             }
         }
     }
+}
