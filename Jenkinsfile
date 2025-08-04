@@ -1,27 +1,37 @@
 pipeline {
     agent any
     stages{
-        // stage('Installing packer on the machine of jenkins'){
-        //     steps{
-        //         sh 'sudo apt-get update -y'
-        //         sh 'sudo apt-get install -y unzip'
-        //         sh 'curl -fsSL -o packer.zip https://releases.hashicorp.com/packer/1.8.4/packer_1.8.4_linux_amd64.zip'
-        //         sh 'unzip packer.zip'
-        //         sh 'sudo mv packer /usr/local/bin/'
-        //         sh 'packer --version'
-        //     }
-        // }
-        stage('Connect to the aws console'){
+        stage('Installing the packer configuration on the jenkins server'){
             steps{
-                withCredentials([usernamePassword(credentialsId: 'aws-creds', passwordVariable: 'secret-access-key', usernameVariable: 'access-key')]) {
+                sh 'sudo apt-get update -y'
+                sh 'sudo apt-get install -y unzip'
+                sh 'curl -fsSL -o packer.zip https://releases.hashicorp.com/packer/1.8.4/packer_1.8.4_linux_amd64.zip'
+                sh 'unzip packer.zip'
+                sh 'sudo mv packer /usr/local/bin/'
+                sh 'packer --version'
+            }
+        }
+        stage('Authenticate to aws account'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'aws-creds', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY')]) {
                 sh '''
                     #!/bin/bash
-                    aws configure set aws_access_key_id $access-key
-                    aws configure set aws_secret_access_key $secret-access-key
+                    aws configure set aws_access_key_id $AWS_ACCESS_KEY
+                    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
                     aws configure set default.region us-east-1
                     aws sts get-caller-identity
                 '''
-                }
+            }
+        }
+    }
+        stage('Run the packer lifecycle commands'){
+            steps{
+                sh '''
+                packer init aws-ubuntu.pkr.hcl
+                packer validate aws-ubuntu.pkr.hcl
+                packer fmt -check aws-ubuntu.pkr.hcl
+                packer build aws-ubuntu.pkr.hcl
+                '''
             }
         }
     }
