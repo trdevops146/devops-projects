@@ -29,7 +29,7 @@ pipeline {
                 sh '''
                 packer init aws-ubuntu.pkr.hcl
                 packer validate aws-ubuntu.pkr.hcl
-                packer fmt -check aws-ubuntu.pkr.hcl
+                packer fmt aws-ubuntu.pkr.hcl
                 packer build aws-ubuntu.pkr.hcl
                 '''
             }
