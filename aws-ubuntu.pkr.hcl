@@ -15,7 +15,7 @@ source "amazon-ebs" "ubuntu" {
         filters = {
             name = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
             most_recent = true
-            owners = ["099720109477"]
+            owners = "099720109477"
         }
     }
     ssh_username = "ubuntu"
