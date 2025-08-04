@@ -13,10 +13,10 @@ source "amazon-ebs" "ubuntu" {
     region = "us-east-1"
     source_ami_filter {
         filters = {
-            name = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
-            most_recent = true
+            name = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"   
         }
         owners = ["099720109477"]
+        most_recent = true
     }
     ssh_username = "ubuntu"
 }
