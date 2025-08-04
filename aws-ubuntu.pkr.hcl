@@ -19,13 +19,6 @@ source "amazon-ebs" "ubuntu" {
         }
     }
     ssh_username = "ubuntu"
-    
-    provisioner "shell" {
-        inline = [
-            "sudo apt-get update"
-        ]
-    }
-
 }
 
 build {
